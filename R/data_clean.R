@@ -22,10 +22,10 @@ cleanR <- function(path, reportingYear = 2019, export = TRUE){
               "salinity_mg_l", "secchi_depth_m", "si_o2_si_sol_react_mg_l",
               "tss_mg_l", "temperature_in_situ_deg_c", "p_h_no_units")
 
-  #function to replace all '<' values with a slightly smaller real value
+  #function to replace all '<' values LOR/2
   conv_less <- function(x){
     ifelse(str_detect(x, "^<"), as.numeric(sapply(str_split(x, "<"),
-                                                  function(x) x[2])) - 0.00001,
+                                                  function(x) x[2]))/2,
            as.numeric(x))
   }
 
@@ -35,8 +35,19 @@ cleanR <- function(path, reportingYear = 2019, export = TRUE){
   files <- list.files(path = path, pattern = ".xlsx",
                           full.names = TRUE)
 
-  #do one to add to
-  d1 <- readxl::read_excel(files[1], .name_repair = ~ janitor::make_clean_names)
+  #do one to add to (handling missing rows)
+  # temp_read <- readxl::read_excel(files[1])
+  #
+  # skip_rows <- NULL
+  # search_string <- "Site Ref"
+  # max_rows_to_search <- 10
+  #
+  # while (length(skip_rows) == 0) {
+  #   skip_rows <- which(stringr::str_detect(temp_read[1:max_rows_to_search,][[1]],search_string)) - 0
+  # }
+  #
+  # d1 <- readxl::read_excel(files[1], skip = skip_rows, .name_repair = ~ janitor::make_clean_names)
+
   tidy_all <- d1 %>%
     select(fields) %>%
     mutate(chlorophyll_a_by_vol_mg_l = conv_less(chlorophyll_a_by_vol_mg_l),
@@ -130,7 +141,7 @@ cleanR <- function(path, reportingYear = 2019, export = TRUE){
               median = median(value, na.rm = TRUE))
 
   #5 secchi is what it is
-  secchi <- tidy_all %>%
+  secchi_1 <- tidy_all %>%
     filter(emz != "nrz") %>%
     select(emz, pord, collect_date, sample_type_code,chlorophyll_a_by_vol_mg_l) %>%
     gather(xvar, value, chlorophyll_a_by_vol_mg_l) %>%
@@ -141,3 +152,8 @@ cleanR <- function(path, reportingYear = 2019, export = TRUE){
 
 
 }
+
+tidy_all %>%
+  select(emz, pord, area_ref, collect_date, sample_type_code,secchi_depth_m) %>%
+  gather(xvar, value, secchi_depth_m) %>%
+  drop_na(value)
