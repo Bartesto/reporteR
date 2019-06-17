@@ -64,7 +64,7 @@ conv_great <- function(x){
 
 
 
-
+# NEED TO LOOK AT HANDLING GREATER THAN
 tidy_all <- d1 %>%
   select(fields) %>%
   mutate(alkalinity_tot_ca_co3_mg_l = conv_less(alkalinity_tot_ca_co3_mg_l),
@@ -84,6 +84,7 @@ tidy_all <- d1 %>%
          temperature_in_situ_deg_c = conv_less(temperature_in_situ_deg_c),
          p_h_no_units = conv_less(p_h_no_units))
 
+#tests seeking number of NA's remains consistent
 sum(is.na(tidy_all$alkalinity_tot_ca_co3_mg_l)) == sum(is.na(d1$alkalinity_tot_ca_co3_mg_l))
 sum(is.na(tidy_all$c_sol_org_doc_doc_as_npoc_mg_l)) == sum(is.na(d1$c_sol_org_doc_doc_as_npoc_mg_l))
 sum(is.na(tidy_all$chlorophyll_a_by_vol_mg_l)) == sum(is.na(d1$chlorophyll_a_by_vol_mg_l))
@@ -111,11 +112,12 @@ sum(is.na(tidy_all$p_h_no_units)) == sum(is.na(d1$p_h_no_units))
 #   select(secchi_depth_m)
 # sum(is.na(t_a$secchi_depth_m)) == sum(is.na(t_b$secchi_depth_m))
 
-#loop to get all data
+#loop to get all data - NEED TO LOOK AT HANDLING GREATER THAN _ SORT LENGTHG OF COL TYPEs
 if(length(files) > 1){
   for(i in seq_along(files)[-1]){
-    temp_names <- names(readxl::read_excel(files[1]))
-    d <- readxl::read_excel(files[2], skip = 2, col_names = new_names,
+    temp_names1 <- names(readxl::read_excel(files[2]))
+    new_names1 <- c(temp_names24, temp_names1[25:length(temp_names1)])
+    d <- readxl::read_excel(files[2], skip = 2, col_names = new_names1,
                             col_types = ctypes, .name_repair = ~ janitor::make_clean_names)
     t_d <- d %>%
       select(fields) %>%
