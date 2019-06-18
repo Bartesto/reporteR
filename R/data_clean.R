@@ -14,7 +14,7 @@ cleanR <- function(path, reportingYear = 2019, export = TRUE){
   #setup info
   #these are the fields to import - need verification
   fields <- c("collection_method_name", "sample_type_code", "collect_date",
-              "area_ref", "alkalinity_tot_ca_co3_mg_l",
+              "project_site_ref", "alkalinity_tot_ca_co3_mg_l",
               "c_sol_org_doc_doc_as_npoc_mg_l", "chlorophyll_a_by_vol_mg_l",
               "n_sum_sol_org_don_mg_l", "n_sum_sol_ox_n_ox_n_ton_mg_l",
               "n_tot_tn_p_tn_mg_l", "nh3_n_nh4_n_sol_mg_l", "o_do_in_situ_mg_l",
@@ -73,9 +73,9 @@ cleanR <- function(path, reportingYear = 2019, export = TRUE){
 
   #add reporting zones plot order for months
   tidy_all <- tidy_all %>%
-    mutate(emz = case_when(area_ref == "BLA" | area_ref == "ARM" | area_ref == "HEA" | area_ref == "NAR" ~ "lower",
-                           area_ref == "NIL" | area_ref == "STJ" | area_ref == "MAY" | area_ref == "RON" ~ "middle",
-                           area_ref == "KIN" | area_ref == "SUC" | area_ref == "WMP" | area_ref == "MSB" ~ "upper",
+    mutate(emz = case_when(project_site_ref == "BLA" | project_site_ref == "ARM" | project_site_ref == "HEA" | project_site_ref == "NAR" ~ "lower",
+                           project_site_ref == "NIL" | project_site_ref == "STJ" | project_site_ref == "MAY" | project_site_ref == "RON" ~ "middle",
+                           project_site_ref == "KIN" | project_site_ref == "SUC" | project_site_ref == "WMP" | project_site_ref == "MSB" ~ "upper",
                            TRUE ~ "nrz")) %>%
     filter(collect_date >= report_start & collect_date < report_fin ) %>%
     mutate(mth = month(collect_date),
@@ -154,6 +154,6 @@ cleanR <- function(path, reportingYear = 2019, export = TRUE){
 }
 
 tidy_all %>%
-  select(emz, pord, area_ref, collect_date, sample_type_code,secchi_depth_m) %>%
+  select(emz, pord, project_site_ref, collect_date, sample_type_code,secchi_depth_m) %>%
   gather(xvar, value, secchi_depth_m) %>%
   drop_na(value)
