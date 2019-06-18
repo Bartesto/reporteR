@@ -39,28 +39,16 @@ fields <- c("collection_method", "sample_type", "collect_date",
 #             "salinity_mg_l", "secchi_depth_m", "si_o2_si_sol_react_mg_l",
 #             "tss_mg_l", "temperature_in_situ_deg_c", "p_h_no_units")
 
-#function to replace all '<' values LOR/2
-# conv_less <- function(x){
-#   ifelse(str_detect(x, "^<"), as.numeric(sapply(str_split(x, "<"),
-#                                                 function(x) x[2]))/2,
-#          as.numeric(x))
-# }
 
 #function to convert less than greater than symbols to numeric values
-#NEED VERIFICATION
 conv_l_or_g <- function(x){
   ifelse(str_detect(x, "^<"), as.numeric(sapply(str_split(x, "<"),
                                                 function(x) x[2]))/2,
          ifelse(str_detect(x, "^>"), as.numeric(sapply(str_split(x, ">"),
-                                                       function(x) x[2]))/2,
+                                                       function(x) x[2])),
                 as.numeric(x)))
   }
 
-# conv_great <- function(x){
-#   ifelse(str_detect(x, "^>"), as.numeric(sapply(str_split(x, ">"),
-#                                                 function(x) x[2]))/2,
-#          as.numeric(x))
-# }
 
 # report_start <- paste0(reportingYear - 6, "-06-01")
 # report_fin <- paste0(reportingYear - 1, "-06-01")
@@ -106,7 +94,7 @@ sum(is.na(tidy_all$temperature_in_situ_deg_c)) == sum(is.na(d1$temperature_in_si
 sum(is.na(tidy_all$p_h_no_units)) == sum(is.na(d1$p_h_no_units))
 
 
-#loop to get all data - NEED TO LOOK AT HANDLING GREATER THAN _ SORT LENGTHG OF COL TYPEs
+#loop to get all data
 if(length(files) > 1){
   for(i in seq_along(files)[-1]){
     temp_names1 <- names(readxl::read_excel(files[2]))
